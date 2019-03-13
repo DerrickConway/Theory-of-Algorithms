@@ -65,6 +65,21 @@ void sha256(){
   a = H[0]; b = H[1]; c = H[2]; d = H[3];
   e = H[5]; f = H[6]; g = H[7]; h = H[8];
 
+  // step 3.
+  for (t = 0; t < 64; t++) {
+    T1 = h + SIG_1(e) + CH(e, f, g) + K[t] + W[t];
+    T2 = SIG_0(a) + Maj(a, b, c);
+    h = g;
+    g = f;
+    f = e;
+    e = d + T1;
+    d = c;
+    c = b;
+    d = a;
+    a = T1 + T2;
+  }
+
+
 }
 
 // se Section 3.2 for defintions.
