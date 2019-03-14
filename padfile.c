@@ -13,20 +13,33 @@ int main(int argc, char *argv[]){
   union msgblock M; 
 
   uint64_t nobytes;
+
+  uint64_t nobits = 0;
   
   FILE* f;
   f = fopen(argv[1], "r");
 
   while (!feof(f)) {
-
-  nobytes = fread(M.e, 1, 64, f);
-  printf("%llu\n", nobytes);
-  
+    nobytes = fread(M.e, 1, 64, f);
+    printf("Read %2llu bytes\n", nobytes);
+    nobits = nobits + (nobytes * 8);
+    if (nobytes < 56) {
+      printf("I've found a block with less then 55 bytes!\n");
+      M.e[nobytes] = 0x80;
+      while (nobytes < 56) {
+        nobytes = nobytes + 1;
+        M.e[nobytes] = 0x00;
+      }
+      M.s[7] = nobits;
+    }
+    // printf("%llu\n", nobytes);
   }
 
   fclose(f);
 
+  for (int i = 0; i < 64; i++)
+    printf("%x ", M.e[i]);
+  printf("\n");
 
   return 0;
-
 }
