@@ -22,6 +22,8 @@ int main(int argc, char *argv[]){
   FILE* f;
   f = fopen(argv[1], "r");
 
+/// do error checking here
+
   int i;
 
  // enum status S = READ;
