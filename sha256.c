@@ -7,6 +7,19 @@
 // The use of fixed lenght integers.
 #include <stdint.h>
 
+//https://codereview.stackexchange.com/questions/151049/endianness-conversion-in-c
+// got this code from the webpage above.
+
+#define REVERSE_UINT32(n) ((uint32_t) ((((n) & 0xFF) << 24) | \
+                                           (((n) & 0xFF00) << 8) | \
+                                           (((n) & 0xFF0000) >> 8) | \
+                                           (((n) & 0xFF000000) >> 24)))
+
+//#define REVERSE_UINT16(n) ((uint16_t) ((((n) & 0xFF) << 8) | \
+                                             (((n) & 0xFF00) >> 8)))
+ 
+#define REVERSE_UINT16 (*(uint16_t *)"\0\xff" < 0x64)
+
 void sha256(FILE *msgf);
 
 // Sections 4.1.2 for defintions
@@ -144,9 +157,27 @@ void sha256(FILE *msgf){
    H[6] = g + H[6]; H[7] = h + H[7];
 
 }
-  // output of the file
+  
+    printf("**************************************************\n");
+    printf("SHA-256 convering from small endian to Big endian\n");
+    printf("**************************************************\n\n");
+// output of the file
+  printf("-----------------------------Smail Endian------------------------------\n");
   printf("%08x %08x %08x %08x %08x %08x %08x %08x\n", H[0], H[1], H[2], H[3], H[4], H[5], H[6], H[7]);
-
+  printf("\n");
+if(REVERSE_UINT16){
+     printf("%08x %08x %08x %08x %08x %08x %08x %08x\n\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
+      printf("*somthing went wrong*\n");
+   }
+// if(REVERSE_UINT16){
+  // printf("%08x %08x %08x %08x %08x %08x %08x %08x\n\n",REVERSE_UINT16(H[0]),REVERSE_UINT16(H[1]),REVERSE_UINT16(H[2]),REVERSE_UINT16(H[3]),REVERSE_UINT16(H[4]),REVERSE_UINT16(H[5]),REVERSE_UINT16(H[6]),REVERSE_UINT16(H[7]));
+ // }
+else{
+      printf("------------------------Converted to Big endian------------------------\n\n");
+     printf("%08x %08x %08x %08x %08x %08x %08x %08x\n",REVERSE_UINT32(H[0]),REVERSE_UINT32(H[1]),REVERSE_UINT32(H[2]),
+    REVERSE_UINT32(H[3]),REVERSE_UINT32(H[4]),REVERSE_UINT32(H[5]),REVERSE_UINT32(H[6]),REVERSE_UINT32(H[7]));
+      printf("\n**********************************************************************\n");
+ }
 
 }
 // rotate right
@@ -252,8 +283,12 @@ int nextmsgBlock(FILE *msgf, union msgblock *M, enum status *S, uint64_t *nobits
     } else if (feof(msgf)){
       // tell s we need another msg block with all the padding
       *S = PAD1;
-    }
+ uint32_t sig0(uint32_t x);
+uint32_t sig1(uint32_t x);
+
+   }
 
     // if we get down here, return 1 so so function is called again
     return 1;
   }
+
